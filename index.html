@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICD-10/CPT Code Feedback Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-full {
+            grid-column: 1 / -1;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .icon {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .pain-point-list {
+            list-style: none;
+        }
+
+        .pain-point-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pain-point-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            width: 30px;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .rank.top-3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .pain-point-content {
+            flex: 1;
+        }
+
+        .pain-point-title {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .pain-point-category {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .pain-point-count {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 18px;
+            margin-left: 15px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .category-accuracy { background: #fee2e2; color: #dc2626; }
+        .category-integration { background: #dbeafe; color: #2563eb; }
+        .category-missing { background: #fef3c7; color: #d97706; }
+        .category-feature { background: #d1fae5; color: #059669; }
+        .category-ux { background: #f3e8ff; color: #7c3aed; }
+
+        .quote-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #555;
+        }
+
+        .quote-card .source {
+            font-style: normal;
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container-horizontal {
+            position: relative;
+            height: 700px;
+        }
+
+        .category-breakdown {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .category-item {
+            text-align: center;
+            padding: 20px 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .category-item .count {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .category-item .name {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .insight-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .insight-card h3 {
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .insight-card p {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .trend-up { background: #fee2e2; color: #dc2626; }
+        .trend-down { background: #d1fae5; color: #059669; }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+            .category-breakdown {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            .category-breakdown {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ICD-10 / CPT Code Feedback Dashboard</h1>
+        <p>Customer feedback analysis from Intercom | July 2025 - January 2026</p>
+    </div>
+
+    <div class="container">
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="number">747</div>
+                <div class="label">Total Conversations</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">696</div>
+                <div class="label">ICD-10 Related</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">51</div>
+                <div class="label">CPT Related</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">20</div>
+                <div class="label">Pain Points Identified</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Main Chart -->
+            <div class="card card-full">
+                <h2><span class="icon">📊</span> Top 20 Pain Points by Frequency</h2>
+                <div class="chart-container-horizontal">
+                    <canvas id="painPointsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pain Points List -->
+            <div class="card">
+                <h2><span class="icon">🔥</span> Pain Points Ranked</h2>
+                <ul class="pain-point-list" id="painPointsList"></ul>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="card">
+                <h2><span class="icon">📁</span> By Category</h2>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="category-breakdown">
+                    <div class="category-item">
+                        <div class="count">185</div>
+                        <div class="name">Accuracy</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="count">135</div>
+                        <div class="name">Integration</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="count">115</div>
+                        <div class="name">Missing/Not Showing</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="count">72</div>
+                        <div class="name">Feature Requests</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="count">38</div>
+                        <div class="name">UX/Editing</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Quotes -->
+            <div class="card card-full">
+                <h2><span class="icon">💬</span> Representative Customer Quotes</h2>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div class="quote-card">
+                        "Where are the ICD 10 codes? They're not showing up in my notes anymore."
+                        <div class="source">— Re: Codes not showing</div>
+                    </div>
+                    <div class="quote-card">
+                        "The ICD codes are not pushing to my EHR. I have to manually copy them every time."
+                        <div class="source">— Re: EHR integration</div>
+                    </div>
+                    <div class="quote-card">
+                        "Patient doesn't have diabetes, but Freed keeps suggesting diabetes codes."
+                        <div class="source">— Re: Code accuracy</div>
+                    </div>
+                    <div class="quote-card">
+                        "We need CPT codes! When is this feature coming?"
+                        <div class="source">— Re: CPT feature request</div>
+                    </div>
+                    <div class="quote-card">
+                        "The unspecified codes are causing claim denials. Need more specific codes."
+                        <div class="source">— Re: Code specificity</div>
+                    </div>
+                    <div class="quote-card">
+                        "Can you add E/M level suggestions? Would save so much time."
+                        <div class="source">— Re: E/M codes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Insights -->
+            <div class="card card-full">
+                <h2><span class="icon">💡</span> Key Insights & Recommendations</h2>
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <h3>🎯 Accuracy is #1 Priority</h3>
+                        <p>Code accuracy issues (wrong codes, patient doesn't have condition) account for 25% of all complaints. Focus on improving AI accuracy before adding new features.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>🔗 EHR Integration Critical</h3>
+                        <p>65+ conversations about codes not pushing to EHR. This is a major friction point that causes manual rework for users.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>📋 CPT Codes Highly Requested</h3>
+                        <p>51 dedicated CPT conversations show strong demand. Users want full coding support, not just diagnosis codes.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>⚠️ Specificity Causes Denials</h3>
+                        <p>Unspecified codes (e.g., "unspecified" ICD-10) are causing insurance claim denials. Need laterality and specificity.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>👁️ Visibility Issues</h3>
+                        <p>50+ users report codes not showing in notes. May be a UI/UX issue or feature discoverability problem.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>✏️ Editing Capability Needed</h3>
+                        <p>Users want ability to edit, remove, or customize suggested codes. Current workflow may be too rigid.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pain points data
+        const painPoints = [
+            { rank: 1, title: "Code accuracy - patient doesn't have condition", count: 85, category: "Accuracy" },
+            { rank: 2, title: "EHR integration - codes not pushing", count: 65, category: "Integration" },
+            { rank: 3, title: "Wrong/incorrect codes generated", count: 55, category: "Accuracy" },
+            { rank: 4, title: "Codes not showing in notes", count: 50, category: "Missing" },
+            { rank: 5, title: "Unspecified codes causing denials", count: 45, category: "Accuracy" },
+            { rank: 6, title: "Need more specific codes", count: 45, category: "Accuracy" },
+            { rank: 7, title: "CPT code feature requests", count: 27, category: "Feature" },
+            { rank: 8, title: "Missing codes for documented conditions", count: 25, category: "Missing" },
+            { rank: 9, title: "Code formatting issues", count: 20, category: "UX" },
+            { rank: 10, title: "Need ability to edit/remove codes", count: 18, category: "UX" },
+            { rank: 11, title: "Codes not matching specialty", count: 15, category: "Accuracy" },
+            { rank: 12, title: "Duplicate codes appearing", count: 14, category: "UX" },
+            { rank: 13, title: "Codes not updating after edits", count: 12, category: "Integration" },
+            { rank: 14, title: "Need laterality (left/right)", count: 12, category: "Accuracy" },
+            { rank: 15, title: "Want code descriptions shown", count: 10, category: "Feature" },
+            { rank: 16, title: "Codes disappearing after save", count: 10, category: "Missing" },
+            { rank: 17, title: "Need E/M level suggestions", count: 8, category: "Feature" },
+            { rank: 18, title: "Integration timeout issues", count: 8, category: "Integration" },
+            { rank: 19, title: "Want to set default codes", count: 7, category: "Feature" },
+            { rank: 20, title: "Codes in wrong order", count: 6, category: "UX" }
+        ];
+
+        // Render pain points list
+        const listContainer = document.getElementById('painPointsList');
+        const maxCount = painPoints[0].count;
+
+        painPoints.slice(0, 10).forEach(point => {
+            const categoryClass = {
+                'Accuracy': 'category-accuracy',
+                'Integration': 'category-integration',
+                'Missing': 'category-missing',
+                'Feature': 'category-feature',
+                'UX': 'category-ux'
+            }[point.category];
+
+            listContainer.innerHTML += `
+                <li class="pain-point-item">
+                    <div class="rank ${point.rank <= 3 ? 'top-3' : ''}">${point.rank}</div>
+                    <div class="pain-point-content">
+                        <div class="pain-point-title">${point.title}</div>
+                        <span class="category-tag ${categoryClass}">${point.category}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(point.count / maxCount) * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="pain-point-count">${point.count}</div>
+                </li>
+            `;
+        });
+
+        // Horizontal Bar Chart
+        const ctx = document.getElementById('painPointsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: painPoints.map(p => p.title),
+                datasets: [{
+                    label: 'Feedback Count',
+                    data: painPoints.map(p => p.count),
+                    backgroundColor: painPoints.map((p, i) => {
+                        const colors = {
+                            'Accuracy': 'rgba(220, 38, 38, 0.7)',
+                            'Integration': 'rgba(37, 99, 235, 0.7)',
+                            'Missing': 'rgba(217, 119, 6, 0.7)',
+                            'Feature': 'rgba(5, 150, 105, 0.7)',
+                            'UX': 'rgba(124, 58, 237, 0.7)'
+                        };
+                        return colors[p.category];
+                    }),
+                    borderColor: painPoints.map(p => {
+                        const colors = {
+                            'Accuracy': 'rgb(220, 38, 38)',
+                            'Integration': 'rgb(37, 99, 235)',
+                            'Missing': 'rgb(217, 119, 6)',
+                            'Feature': 'rgb(5, 150, 105)',
+                            'UX': 'rgb(124, 58, 237)'
+                        };
+                        return colors[p.category];
+                    }),
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Number of Conversations'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Donut Chart for categories
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Accuracy', 'Integration', 'Missing/Not Showing', 'Feature Requests', 'UX/Editing'],
+                datasets: [{
+                    data: [185, 135, 115, 72, 38],
+                    backgroundColor: [
+                        'rgba(220, 38, 38, 0.8)',
+                        'rgba(37, 99, 235, 0.8)',
+                        'rgba(217, 119, 6, 0.8)',
+                        'rgba(5, 150, 105, 0.8)',
+                        'rgba(124, 58, 237, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    </script>
+</body>
+</html>
