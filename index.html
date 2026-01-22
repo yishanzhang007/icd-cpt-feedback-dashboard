@@ -356,42 +356,6 @@
                 </div>
             </div>
 
-            <!-- Pain Points List -->
-            <div class="card">
-                <h2><span class="icon">🔥</span> Pain Points Ranked</h2>
-                <ul class="pain-point-list" id="painPointsList"></ul>
-            </div>
-
-            <!-- Category Breakdown -->
-            <div class="card">
-                <h2><span class="icon">📁</span> By Category</h2>
-                <div class="chart-container" style="height: 300px;">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-                <div class="category-breakdown">
-                    <div class="category-item">
-                        <div class="count">707</div>
-                        <div class="name">Accuracy</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="count">237</div>
-                        <div class="name">Feature Requests</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="count">42</div>
-                        <div class="name">Integration</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="count">24</div>
-                        <div class="name">Missing/Not Showing</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="count">4</div>
-                        <div class="name">UX/Editing</div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Sample Conversations with Intercom Links -->
             <div class="card card-full">
                 <h2><span class="icon">💬</span> Sample Conversations (Click to Open in Intercom)</h2>
@@ -520,34 +484,6 @@
             { rank: 9, title: "Want ability to edit/modify codes", count: 4, category: "UX" }
         ];
 
-        // Render pain points list
-        const listContainer = document.getElementById('painPointsList');
-        const maxCount = painPoints[0].count;
-
-        painPoints.slice(0, 10).forEach(point => {
-            const categoryClass = {
-                'Accuracy': 'category-accuracy',
-                'Integration': 'category-integration',
-                'Missing': 'category-missing',
-                'Feature': 'category-feature',
-                'UX': 'category-ux'
-            }[point.category];
-
-            listContainer.innerHTML += `
-                <li class="pain-point-item">
-                    <div class="rank ${point.rank <= 3 ? 'top-3' : ''}">${point.rank}</div>
-                    <div class="pain-point-content">
-                        <div class="pain-point-title">${point.title}</div>
-                        <span class="category-tag ${categoryClass}">${point.category}</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${(point.count / maxCount) * 100}%"></div>
-                        </div>
-                    </div>
-                    <div class="pain-point-count">${point.count}</div>
-                </li>
-            `;
-        });
-
         // Horizontal Bar Chart
         const ctx = document.getElementById('painPointsChart').getContext('2d');
         new Chart(ctx, {
@@ -607,36 +543,6 @@
                         }
                     }
                 }
-            }
-        });
-
-        // Donut Chart for categories - VERIFIED DATA
-        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-        new Chart(categoryCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Accuracy', 'Feature Requests', 'Integration', 'Missing/Not Showing', 'UX/Editing'],
-                datasets: [{
-                    data: [707, 237, 42, 24, 4],
-                    backgroundColor: [
-                        'rgba(220, 38, 38, 0.8)',
-                        'rgba(5, 150, 105, 0.8)',
-                        'rgba(37, 99, 235, 0.8)',
-                        'rgba(217, 119, 6, 0.8)',
-                        'rgba(124, 58, 237, 0.8)'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right'
-                    }
-                },
-                cutout: '60%'
             }
         });
     </script>
