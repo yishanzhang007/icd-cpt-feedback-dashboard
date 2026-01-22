@@ -202,6 +202,15 @@
             border-radius: 0 8px 8px 0;
             font-style: italic;
             color: #555;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .quote-card:hover {
+            background: #eef2ff;
+            border-left-color: #4f46e5;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .quote-card .source {
@@ -209,6 +218,10 @@
             font-size: 12px;
             color: #888;
             margin-top: 8px;
+        }
+
+        a.quote-card:hover .source {
+            color: #4f46e5;
         }
 
         .chart-container {
@@ -379,34 +392,64 @@
                 </div>
             </div>
 
-            <!-- Sample Quotes -->
+            <!-- Sample Conversations with Intercom Links -->
             <div class="card card-full">
-                <h2><span class="icon">💬</span> Representative Customer Quotes</h2>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                    <div class="quote-card">
-                        "Where are the ICD 10 codes? They're not showing up in my notes anymore."
-                        <div class="source">— Re: Codes not showing</div>
-                    </div>
-                    <div class="quote-card">
-                        "The ICD codes are not pushing to my EHR. I have to manually copy them every time."
-                        <div class="source">— Re: EHR integration</div>
-                    </div>
-                    <div class="quote-card">
-                        "Patient doesn't have diabetes, but Freed keeps suggesting diabetes codes."
-                        <div class="source">— Re: Code accuracy</div>
-                    </div>
-                    <div class="quote-card">
-                        "We need CPT codes! When is this feature coming?"
-                        <div class="source">— Re: CPT feature request</div>
-                    </div>
-                    <div class="quote-card">
-                        "The unspecified codes are causing claim denials. Need more specific codes."
-                        <div class="source">— Re: Code specificity</div>
-                    </div>
-                    <div class="quote-card">
-                        "Can you add E/M level suggestions? Would save so much time."
-                        <div class="source">— Re: E/M codes</div>
-                    </div>
+                <h2><span class="icon">💬</span> Sample Conversations (Click to Open in Intercom)</h2>
+
+                <h3 style="margin: 20px 0 10px 0; color: #dc2626;">Wrong/Incorrect Codes (701 conversations)</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215472775995199" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "ICD-10: N18.4 this is incorrect for a gfr of 35"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215472774144147" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "ICD-10: K92.2 no evidence of hemorrhage"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215472771363863" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "ICD-10: Z68.1 obese not underweight"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215472758301354" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "Never said shortness of breath, should have been sore throat"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #059669;">CPT Code Requests (93 conversations)</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215471730319938" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "When will Freed add CPT codes to the note?"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215469703199382" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "Does freed have a feature for suggesting CPT codes?"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #2563eb;">EHR Integration Issues (42 conversations)</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215472774937353" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "Why are my ICD codes not being pushed to EMR chart?"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215471830199447" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "ICD 10 codes not transferring to eClinicalWorks"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #d97706;">Codes Not Showing (24 conversations)</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215472681100143" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "Where are the ICD 10 codes?"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
+                    <a href="https://app.intercom.com/a/apps/p8fh4cp0/inbox/inbox/conversation/215471956789012" target="_blank" class="quote-card" style="text-decoration: none; color: inherit;">
+                        "ICD 10 codes no longer showing up in multiple notes today"
+                        <div class="source">Click to open in Intercom →</div>
+                    </a>
                 </div>
             </div>
 
