@@ -231,7 +231,7 @@
 
         .chart-container-horizontal {
             position: relative;
-            height: 400px;
+            height: 450px;
         }
 
         .category-breakdown {
@@ -342,7 +342,7 @@
                 <div class="label">CPT Related</div>
             </div>
             <div class="stat-card">
-                <div class="number">8</div>
+                <div class="number">9</div>
                 <div class="label">Pain Points Identified</div>
             </div>
         </div>
@@ -374,7 +374,7 @@
                         <div class="name">Accuracy</div>
                     </div>
                     <div class="category-item">
-                        <div class="count">237</div>
+                        <div class="count">282</div>
                         <div class="name">Feature Requests</div>
                     </div>
                     <div class="category-item">
@@ -492,11 +492,12 @@
             { rank: 1, title: "Wrong/incorrect ICD codes suggested", count: 701, category: "Accuracy" },
             { rank: 2, title: "Want ICD codes feature enabled", count: 129, category: "Feature" },
             { rank: 3, title: "Want CPT codes feature", count: 93, category: "Feature" },
-            { rank: 4, title: "EHR integration - codes not pushing", count: 42, category: "Integration" },
-            { rank: 5, title: "Codes not showing/disappeared", count: 24, category: "Missing" },
-            { rank: 6, title: "Feature availability questions", count: 15, category: "Feature" },
-            { rank: 7, title: "Need more specific codes (not unspecified)", count: 6, category: "Accuracy" },
-            { rank: 8, title: "Want ability to edit/modify codes", count: 4, category: "UX" }
+            { rank: 4, title: "Want ICD codes IN Assessment & Plan section", count: 45, category: "Feature" },
+            { rank: 5, title: "EHR integration - codes not pushing", count: 42, category: "Integration" },
+            { rank: 6, title: "Codes not showing/disappeared", count: 24, category: "Missing" },
+            { rank: 7, title: "Feature availability questions", count: 15, category: "Feature" },
+            { rank: 8, title: "Need more specific codes (not unspecified)", count: 6, category: "Accuracy" },
+            { rank: 9, title: "Want ability to edit/modify codes", count: 4, category: "UX" }
         ];
 
         // Render pain points list
@@ -596,7 +597,7 @@
             data: {
                 labels: ['Accuracy', 'Feature Requests', 'Integration', 'Missing/Not Showing', 'UX/Editing'],
                 datasets: [{
-                    data: [707, 237, 42, 24, 4],
+                    data: [707, 282, 42, 24, 4],
                     backgroundColor: [
                         'rgba(220, 38, 38, 0.8)',
                         'rgba(5, 150, 105, 0.8)',
